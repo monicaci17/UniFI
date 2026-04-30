@@ -1,6 +1,7 @@
 package com.example.unifi.ui.screens.homemenu
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -12,7 +13,6 @@ import androidx.navigation.NavHostController
 import com.example.unifi.navigation.Routes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -21,17 +21,20 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun HomeMenuScreen(navController: NavHostController) {
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
-        // Encabezado fijo
+        // Encabezado
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = Color(0xFF3A7BD5) // verde, por ejemplo
+            color = MaterialTheme.colorScheme.primary
         ) {
             Text(
                 text = "U N I F I",
-                fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge,
                 fontSize = 30.sp,
                 modifier = Modifier
                     .padding(16.dp)
@@ -49,14 +52,11 @@ fun HomeMenuScreen(navController: NavHostController) {
                 .padding(12.dp)
         ) {
 
-
             Row(modifier = Modifier.fillMaxWidth()) {
                 MenuButton("Notas", Icons.Default.Edit, Modifier.weight(1f)) {
                     navController.navigate(Routes.Notas.route)
                 }
-                MenuButton("Perfil", Icons.Default.Person, Modifier.weight(1f)) {
-
-                }
+                MenuButton("Perfil", Icons.Default.Person, Modifier.weight(1f)) {}
                 MenuButton("Calendario", Icons.Default.DateRange, Modifier.weight(1f)) {
                     navController.navigate(Routes.Calendario.route)
                 }
@@ -78,13 +78,13 @@ fun HomeMenuScreen(navController: NavHostController) {
                     navController.navigate(Routes.Herramientas.route)
                 }
                 MenuButton("Metas", Icons.Default.Flag, Modifier.weight(1f)) {
-
+                    navController.navigate(Routes.Metas.route)
                 }
             }
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 MenuButton("Agregar\ntarea", Icons.Default.AddTask, Modifier.weight(1f)) {
-
+                    navController.navigate(Routes.Tareas.route)
                 }
                 MenuButton("Horario", Icons.Default.Schedule, Modifier.weight(1f)) {
                     navController.navigate(Routes.Horario.route)
@@ -93,13 +93,18 @@ fun HomeMenuScreen(navController: NavHostController) {
                     navController.navigate(Routes.Foro.route)
                 }
             }
-
-
         }
+
         Spacer(modifier = Modifier.height(30.dp))
+
+        // Botón de configuración
         Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = Color(0xFF3A7BD5)
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    navController.navigate(Routes.Configuracion.route)
+                },
+            color = MaterialTheme.colorScheme.primary
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -108,16 +113,16 @@ fun HomeMenuScreen(navController: NavHostController) {
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = "Configuración",
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
 
                 Spacer(modifier = Modifier.width(30.dp))
 
                 Text(
                     text = "Configuración",
-                    fontFamily = FontFamily.SansSerif,
+
                     fontSize = 20.sp,
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -138,9 +143,9 @@ fun MenuButton(
             .aspectRatio(1f),
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(6.dp),
-                colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFA7C7E7) // tu azul suave
-                )
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondary
+        )
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -150,14 +155,16 @@ fun MenuButton(
             Icon(
                 imageVector = icon,
                 contentDescription = text,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(32.dp),
+                tint = MaterialTheme.colorScheme.onSecondary
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = text,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSecondary
             )
         }
     }

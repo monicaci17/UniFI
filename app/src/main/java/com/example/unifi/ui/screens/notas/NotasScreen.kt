@@ -1,5 +1,6 @@
 package com.example.unifi.ui.screens.notas
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,7 +17,7 @@ fun NotasScreen(vm: NotaViewModel = viewModel()) {
     var titulo by remember { mutableStateOf("") }
     var contenido by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(modifier = Modifier.background(MaterialTheme.colorScheme.background).padding(16.dp)) {
 
         Text("UNIFI - Notas", style = MaterialTheme.typography.titleLarge)
 

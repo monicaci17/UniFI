@@ -1,5 +1,6 @@
 package com.example.unifi.ui.screens.relajacion
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,10 +13,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.unifi.data.model.Frases
 import com.example.unifi.viewmodel.RelajacionViewModel
@@ -27,29 +32,50 @@ fun RelajacionScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
-        Text(
-            text = "Relajación y Motivación",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Button(
-            onClick = {
-                relajacionViewModel.cargarFrases()
-            }
+        // 🔵 ENCABEZADO
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.primary
         ) {
-            Text("Cargar nuevas frases")
+            Text(
+                text = "RELAJACIÓN",
+                style = MaterialTheme.typography.titleLarge,
+                fontSize = 26.sp,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                color = MaterialTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center
+            )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize()
+        ) {
 
-        LazyColumn {
-            items(relajacionViewModel.frases) { frase ->
-                FraseCard(frase)
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = {
+                    relajacionViewModel.cargarFrases()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Cargar nuevas frases")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            LazyColumn {
+                items(relajacionViewModel.frases) { frase ->
+                    FraseCard(frase)
+                }
             }
         }
     }
@@ -61,21 +87,26 @@ fun FraseCard(frase: Frases) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
         Column(
             modifier = Modifier.padding(14.dp)
         ) {
             Text(
                 text = "\"${frase.q}\"",
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "- ${frase.a}",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
