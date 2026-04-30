@@ -7,7 +7,7 @@ import com.example.unifi.apis.RelajacionApi
 import com.example.unifi.data.model.Frases
 import kotlinx.coroutines.launch
 
-class RelajacionViewModel : ViewModel() {
+open class RelajacionViewModel : ViewModel() {
 
     val frases = mutableStateListOf<Frases>()
 
@@ -15,7 +15,7 @@ class RelajacionViewModel : ViewModel() {
         cargarFrases()
     }
 
-    fun cargarFrases() {
+    open fun cargarFrases() {
         viewModelScope.launch {
             try {
                 frases.clear()

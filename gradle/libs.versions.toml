@@ -1,6 +1,7 @@
 [versions]
 agp = "9.0.1"
 coreKtx = "1.18.0"
+androidxJunit = "1.1.5"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
@@ -12,6 +13,8 @@ lifecycle = "2.10.0"
 navigation = "2.9.8"
 retrofit = "3.0.0"
 coil = "2.7.0"
+espresso = "3.5.1"
+compose = "1.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,7 +39,6 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
-
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
