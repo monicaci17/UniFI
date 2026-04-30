@@ -72,4 +72,10 @@ dependencies {
     // Testing
     testImplementation(libs.junit)
 
+    //APIS
+    implementation(libs.coil.compose)
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+
 }

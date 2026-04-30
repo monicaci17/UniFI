@@ -41,7 +41,7 @@ class CalendarioViewModel : ViewModel() {
     fun nombreMes(): String {
         return LocalDate.of(añoActual, mesActual, 1)
             .month
-            .getDisplayName(TextStyle.FULL, Locale("es"))
+            .getDisplayName(TextStyle.FULL, Locale.forLanguageTag("es"))
             .replaceFirstChar { it.uppercase() }
     }
 

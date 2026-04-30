@@ -187,7 +187,7 @@ fun HorarioScreen(vm: HorarioViewModel = viewModel()) {
 
                     // Línea separadora (excepto el último)
                     if (index < vm.diasSemana.size - 1) {
-                        Divider(
+                        VerticalDivider(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .width(1.dp)

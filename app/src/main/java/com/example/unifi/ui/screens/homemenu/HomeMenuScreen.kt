@@ -68,14 +68,14 @@ fun HomeMenuScreen(navController: NavHostController) {
                     Icons.Default.SelfImprovement,
                     Modifier.weight(1f)
                 ) {
-
+                    navController.navigate(Routes.Relajacion.route)
                 }
                 MenuButton(
                     "Herramientas\nde estudio",
                     Icons.Default.CollectionsBookmark,
                     Modifier.weight(1f)
                 ) {
-
+                    navController.navigate(Routes.Herramientas.route)
                 }
                 MenuButton("Metas", Icons.Default.Flag, Modifier.weight(1f)) {
 
@@ -90,7 +90,7 @@ fun HomeMenuScreen(navController: NavHostController) {
                     navController.navigate(Routes.Horario.route)
                 }
                 MenuButton("Foro", Icons.Default.Forum, Modifier.weight(1f)) {
-
+                    navController.navigate(Routes.Foro.route)
                 }
             }
 
