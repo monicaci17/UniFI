@@ -11,4 +11,7 @@ sealed class Routes(val route: String) {
     object Configuracion : Routes("configuracion")
     object Tareas : Routes("tareas")
     object Metas : Routes("metas")
+    object Perfil : Routes("perfil")
+    object Registro : Routes("registro")
+    object Config2 : Routes("config2")
 }

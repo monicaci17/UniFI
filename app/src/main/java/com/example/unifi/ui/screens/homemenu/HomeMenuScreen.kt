@@ -52,11 +52,36 @@ fun HomeMenuScreen(navController: NavHostController) {
                 .padding(12.dp)
         ) {
 
+            Text(
+                text = "Bienvenid@ a UNIFI",
+                style = MaterialTheme.typography.titleLarge,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onTertiary
+            )
+            Text(
+                text = "¡Comienza a organizarte!",
+                style = MaterialTheme.typography.titleLarge,
+                fontSize = 15.sp,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onTertiary
+            )
+            Spacer(modifier = Modifier.height(30.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
                 MenuButton("Notas", Icons.Default.Edit, Modifier.weight(1f)) {
                     navController.navigate(Routes.Notas.route)
                 }
-                MenuButton("Perfil", Icons.Default.Person, Modifier.weight(1f)) {}
+                MenuButton("Perfil", Icons.Default.Person, Modifier.weight(1f)) {
+                    navController.navigate(Routes.Perfil.route)
+                }
                 MenuButton("Calendario", Icons.Default.DateRange, Modifier.weight(1f)) {
                     navController.navigate(Routes.Calendario.route)
                 }
@@ -95,14 +120,14 @@ fun HomeMenuScreen(navController: NavHostController) {
             }
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(80.dp))
 
         // Botón de configuración
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    navController.navigate(Routes.Configuracion.route)
+                    navController.navigate(Routes.Config2.route)
                 },
             color = MaterialTheme.colorScheme.primary
         ) {

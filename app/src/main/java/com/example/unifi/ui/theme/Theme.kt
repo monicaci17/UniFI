@@ -20,13 +20,13 @@ private val DarkColors = darkColorScheme(
     onSecondary = Color.White,
 
     tertiary = Color(0xFF00A8A8),
-    onTertiary = Color.Black,
+    onTertiary = Color(0xFFA7C7E7),
 
     background = Color(0xFF121212),
     onBackground = Color(0xFFE0E0E0),
 
-    surface = Color(0xFF1E1E1E),
-    onSurface = Color(0xFFE0E0E0),
+    surface = Color(0xFF1C2C48),
+    onSurface = Color.White,
 
     error = Color(0xFFCF6679),
     onError = Color.Black,
@@ -44,13 +44,13 @@ private val LightColors = lightColorScheme(
     secondary = Color(0xFFA7C7E7),
     onSecondary = Color.Black,
 
-    tertiary = Color(0xFF00BFA5),
-    onTertiary = Color.White,
+    tertiary = Color(0xFF00A2BF),
+    onTertiary = Color(0xFF3A7BD5),
 
     background = Color(0xFFFFFFFF),
     onBackground = Color(0xFF1C1C1C),
 
-    surface = Color(0xFFF5F5F5),
+    surface = Color(0xFFB8E3FF),
     onSurface = Color(0xFF1C1C1C),
 
     error = Color(0xFFB00020),
