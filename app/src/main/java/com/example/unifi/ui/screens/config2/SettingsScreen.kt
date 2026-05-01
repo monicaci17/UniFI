@@ -54,7 +54,7 @@ fun SettingsScreen(viewModel: UserViewModel,activity: Activity) {
                 text = "General",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary
+                color = MaterialTheme.colorScheme.onTertiary
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -114,7 +114,7 @@ fun SettingsScreen(viewModel: UserViewModel,activity: Activity) {
                 text = "Cuenta",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary
+                color = MaterialTheme.colorScheme.onTertiary
             )
 
             Spacer(modifier = Modifier.height(8.dp))

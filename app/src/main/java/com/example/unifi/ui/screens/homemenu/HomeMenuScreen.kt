@@ -1,8 +1,10 @@
 package com.example.unifi.ui.screens.homemenu
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,10 +15,15 @@ import androidx.navigation.NavHostController
 import com.example.unifi.navigation.Routes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.unifi.R
 
 @Composable
 fun HomeMenuScreen(navController: NavHostController) {
@@ -44,7 +51,64 @@ fun HomeMenuScreen(navController: NavHostController) {
             )
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // 🔥 BIENVENIDA CON IMAGEN
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp)
+                .padding(horizontal = 12.dp)
+        ) {
+
+            // Imagen de fondo
+            Image(
+                painter = painterResource(id = R.drawable.cu),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(16.dp))
+            )
+
+            // Capa oscura para contraste
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.Black.copy(alpha = 0.35f))
+            )
+
+            // Texto encima
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                Text(
+                    text = "Bienvenid@ a UNIFI",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Text(
+                    text = "¡Comienza a organizarte!",
+                    fontSize = 15.sp,
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         Column(
             modifier = Modifier
@@ -52,29 +116,6 @@ fun HomeMenuScreen(navController: NavHostController) {
                 .padding(12.dp)
         ) {
 
-            Text(
-                text = "Bienvenid@ a UNIFI",
-                style = MaterialTheme.typography.titleLarge,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onTertiary
-            )
-            Text(
-                text = "¡Comienza a organizarte!",
-                style = MaterialTheme.typography.titleLarge,
-                fontSize = 15.sp,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onTertiary
-            )
-            Spacer(modifier = Modifier.height(30.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
                 MenuButton("Notas", Icons.Default.Edit, Modifier.weight(1f)) {
                     navController.navigate(Routes.Notas.route)
@@ -89,7 +130,7 @@ fun HomeMenuScreen(navController: NavHostController) {
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 MenuButton(
-                    "Técnicas de\nrelajación",
+                    "Motivación",
                     Icons.Default.SelfImprovement,
                     Modifier.weight(1f)
                 ) {
@@ -120,7 +161,7 @@ fun HomeMenuScreen(navController: NavHostController) {
             }
         }
 
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // Botón de configuración
         Surface(
@@ -145,7 +186,6 @@ fun HomeMenuScreen(navController: NavHostController) {
 
                 Text(
                     text = "Configuración",
-
                     fontSize = 20.sp,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
