@@ -1,24 +1,19 @@
 package com.example.unifi.viewmodel
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.ViewModel
-import com.example.unifi.data.model.Meta
 import com.example.unifi.data.model.Nota
 import com.example.unifi.data.model.Tarea
+import com.example.unifi.data.model.Meta
+import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
-
 
 class PendienteViewModel : ViewModel() {
 
-    // 1. Inicializamos la base de datos de Firebase
     private val db = FirebaseFirestore.getInstance()
-
-    // 2. Creamos las referencias exactas a tus colecciones en la nube
     private val notasRef = db.collection("notas")
     private val tareasRef = db.collection("tareas")
     private val metasRef = db.collection("metas")
 
-    // 3. Listas mutables observables por Compose
     var listaNotas = mutableStateListOf<Nota>()
         private set
 
@@ -28,14 +23,12 @@ class PendienteViewModel : ViewModel() {
     var listaMetas = mutableStateListOf<Meta>()
         private set
 
-    // 4. El bloque init arranca la escucha en tiempo real al abrir la app
     init {
         fetchNotas()
         fetchTareas()
         fetchMetas()
     }
 
-    // --- LÓGICA DE NOTAS (Firebase) ---
     private fun fetchNotas() {
         notasRef.addSnapshotListener { snapshot, error ->
             if (error != null || snapshot == null) return@addSnapshotListener
@@ -54,8 +47,6 @@ class PendienteViewModel : ViewModel() {
         notasRef.document(nota.id).delete()
     }
 
-
-    // --- LÓGICA DE TAREAS (Firebase) ---
     private fun fetchTareas() {
         tareasRef.addSnapshotListener { snapshot, error ->
             if (error != null || snapshot == null) return@addSnapshotListener
@@ -76,7 +67,6 @@ class PendienteViewModel : ViewModel() {
     }
 
     fun cambiarEstadoTarea(tarea: Tarea) {
-        // Copiamos la tarea invirtiendo el booleano y la resubimos con el mismo ID
         val tareaActualizada = tarea.copy(estaTerminado = !tarea.estaTerminado)
         tareasRef.document(tarea.id).set(tareaActualizada)
     }
@@ -85,8 +75,6 @@ class PendienteViewModel : ViewModel() {
         tareasRef.document(tarea.id).delete()
     }
 
-
-    // --- LÓGICA DE METAS (Firebase) ---
     private fun fetchMetas() {
         metasRef.addSnapshotListener { snapshot, error ->
             if (error != null || snapshot == null) return@addSnapshotListener
