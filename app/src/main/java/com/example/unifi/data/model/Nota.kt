@@ -1,7 +1,7 @@
 package com.example.unifi.data.model
 
 data class Nota(
-    val id: Int,
-    val titulo: String,
-    val contenido: String
+    val id: String = "",
+    val titulo: String = "",
+    val contenido: String = ""
 )
