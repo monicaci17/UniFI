@@ -8,7 +8,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -54,22 +53,10 @@ fun HerramientasScreen(
     val segundos = tiempoRestante % 60
 
     val herramientas = listOf(
-        Herramienta(
-            "Repaso activo",
-            "Intenta responder preguntas sin ver tus apuntes."
-        ),
-        Herramienta(
-            "Método Feynman",
-            "Explica el tema como si se lo enseñaras a alguien más."
-        ),
-        Herramienta(
-            "Mapas mentales",
-            "Organiza ideas y relaciones de forma visual."
-        ),
-        Herramienta(
-            "Tarjetas de memoria",
-            "Crea temas, guarda preguntas y repasa respuestas."
-        )
+        Herramienta("Repaso activo", "Intenta responder preguntas sin ver tus apuntes."),
+        Herramienta("Método Feynman", "Explica el tema como si se lo enseñaras a alguien más."),
+        Herramienta("Mapas mentales", "Organiza ideas y relaciones de forma visual."),
+        Herramienta("Tarjetas de memoria", "Crea temas, guarda preguntas y repasa respuestas.")
     )
 
     Column(
@@ -77,7 +64,6 @@ fun HerramientasScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // 🔵 ENCABEZADO
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.primary
@@ -91,7 +77,6 @@ fun HerramientasScreen(
                     .padding(16.dp),
                 color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center
-
             )
         }
 
@@ -101,10 +86,7 @@ fun HerramientasScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
-
-
             item {
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Card(
@@ -124,14 +106,13 @@ fun HerramientasScreen(
 
                         Text(
                             text = "%02d:%02d".format(minutos, segundos),
-                            fontSize = 60.sp,
+                            fontSize = 60.sp
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
                             text = "Trabaja durante 25 minutos enfocado y descansa 5 minutos. Este método ayuda a mejorar la concentración y evitar el agotamiento.",
-
                             textAlign = TextAlign.Center
                         )
 
@@ -174,7 +155,6 @@ fun HerramientasScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-
             items(herramientas) { herramienta ->
                 Card(
                     modifier = Modifier
@@ -192,15 +172,11 @@ fun HerramientasScreen(
                             text = herramienta.titulo,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
-
                         )
 
                         Spacer(modifier = Modifier.height(6.dp))
 
-                        Text(
-                            text = herramienta.descripcion,
-
-                        )
+                        Text(text = herramienta.descripcion)
                     }
                 }
             }
@@ -236,6 +212,9 @@ fun HerramientasScreen(
                             onClick = {
                                 tarjetasViewModel.agregarTema(nombreTema)
                                 nombreTema = ""
+                                temaSeleccionado = -1
+                                indiceTarjeta = 0
+                                mostrarRespuesta = false
                             }
                         ) {
                             Text("Agregar")
@@ -249,21 +228,44 @@ fun HerramientasScreen(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     tarjetasViewModel.temas.forEachIndexed { index, tema ->
-                        Button(
-                            onClick = {
-                                temaSeleccionado = index
-                                indiceTarjeta = 0
-                                mostrarRespuesta = false
-                            },
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp)
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Text(tema.nombre)
+                            Button(
+                                onClick = {
+                                    temaSeleccionado = index
+                                    indiceTarjeta = 0
+                                    mostrarRespuesta = false
+                                    tarjetasViewModel.cargarTarjetas(index)
+                                },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(tema.nombre)
+                            }
+
+                            Button(
+                                onClick = {
+                                    tarjetasViewModel.eliminarTema(index)
+
+                                    if (temaSeleccionado == index) {
+                                        temaSeleccionado = -1
+                                        indiceTarjeta = 0
+                                        mostrarRespuesta = false
+                                    }
+                                }
+                            ) {
+                                Text("Eliminar")
+                            }
                         }
                     }
 
-                    if (temaSeleccionado != -1) {
+                    if (
+                        temaSeleccionado != -1 &&
+                        temaSeleccionado < tarjetasViewModel.temas.size
+                    ) {
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
@@ -300,6 +302,8 @@ fun HerramientasScreen(
                                 )
                                 pregunta = ""
                                 respuesta = ""
+                                indiceTarjeta = 0
+                                mostrarRespuesta = false
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -311,6 +315,10 @@ fun HerramientasScreen(
                         val tarjetas = tarjetasViewModel.temas[temaSeleccionado].tarjetas
 
                         if (tarjetas.isNotEmpty()) {
+                            if (indiceTarjeta >= tarjetas.size) {
+                                indiceTarjeta = 0
+                            }
+
                             val tarjeta = tarjetas[indiceTarjeta]
 
                             Card(
@@ -357,24 +365,40 @@ fun HerramientasScreen(
                                     Row(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
+
                                         Button(
                                             onClick = {
                                                 mostrarRespuesta = !mostrarRespuesta
                                             }
                                         ) {
-                                            Text(
-                                                if (mostrarRespuesta) "Ocultar" else "Mostrar"
-                                            )
+                                            Text(if (mostrarRespuesta) "Ocultar" else "Mostrar")
                                         }
 
                                         Button(
                                             onClick = {
-                                                indiceTarjeta =
-                                                    (indiceTarjeta + 1) % tarjetas.size
+                                                indiceTarjeta = (indiceTarjeta + 1) % tarjetas.size
                                                 mostrarRespuesta = false
                                             }
                                         ) {
                                             Text("Siguiente")
+                                        }
+
+                                        Button(
+                                            onClick = {
+
+                                                tarjetasViewModel.eliminarTarjeta(
+                                                    temaSeleccionado,
+                                                    indiceTarjeta
+                                                )
+
+                                                mostrarRespuesta = false
+
+                                                if (indiceTarjeta > 0) {
+                                                    indiceTarjeta--
+                                                }
+                                            }
+                                        ) {
+                                            Text("Eliminar")
                                         }
                                     }
                                 }
