@@ -29,8 +29,6 @@ fun ForoScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-
-        // 🔵 ENCABEZADO
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.primary
@@ -48,15 +46,12 @@ fun ForoScreen(
         }
 
         if (postSeleccionado == -1) {
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-
                 item {
-
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
@@ -101,10 +96,6 @@ fun ForoScreen(
 
                 itemsIndexed(foroViewModel.posts) { index, post ->
                     Card(
-                        onClick = {
-                            postSeleccionado = index
-                            respuesta = ""
-                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 6.dp),
@@ -127,7 +118,6 @@ fun ForoScreen(
 
                             Text(
                                 text = post.contenido,
-
                                 color = MaterialTheme.colorScheme.onSurface
                             )
 
@@ -138,13 +128,43 @@ fun ForoScreen(
                                 fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Button(
+                                    onClick = {
+                                        postSeleccionado = index
+                                        respuesta = ""
+                                        foroViewModel.cargarRespuestas(index)
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Ver")
+                                }
+
+                                Button(
+                                    onClick = {
+                                        foroViewModel.eliminarPost(index)
+
+                                        if (postSeleccionado == index) {
+                                            postSeleccionado = -1
+                                            respuesta = ""
+                                        }
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Eliminar")
+                                }
+                            }
                         }
                     }
                 }
             }
-
-        } else {
-
+        } else if (postSeleccionado < foroViewModel.posts.size) {
             val post = foroViewModel.posts[postSeleccionado]
 
             LazyColumn(
@@ -152,7 +172,6 @@ fun ForoScreen(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-
                 item {
                     Button(
                         onClick = {
@@ -190,7 +209,7 @@ fun ForoScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                items(post.respuestas.size) { i ->
+                itemsIndexed(post.respuestas) { indexRespuesta, respuestaItem ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -200,11 +219,27 @@ fun ForoScreen(
                             containerColor = MaterialTheme.colorScheme.surface
                         )
                     ) {
-                        Text(
-                            text = post.respuestas[i].texto,
-                            modifier = Modifier.padding(12.dp),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                        Column(
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            Text(
+                                text = respuestaItem.texto,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Button(
+                                onClick = {
+                                    foroViewModel.eliminarRespuesta(
+                                        postSeleccionado,
+                                        indexRespuesta
+                                    )
+                                }
+                            ) {
+                                Text("Eliminar respuesta")
+                            }
+                        }
                     }
                 }
 
@@ -222,7 +257,10 @@ fun ForoScreen(
 
                     Button(
                         onClick = {
-                            foroViewModel.agregarRespuesta(postSeleccionado, respuesta)
+                            foroViewModel.agregarRespuesta(
+                                postSeleccionado,
+                                respuesta
+                            )
                             respuesta = ""
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -231,6 +269,8 @@ fun ForoScreen(
                     }
                 }
             }
+        } else {
+            postSeleccionado = -1
         }
     }
 }
