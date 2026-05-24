@@ -1,5 +1,6 @@
 package com.example.unifi.ui.screens.tareas
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,13 +23,37 @@ fun TareasScreen(vm: PendienteViewModel = viewModel()) {
     var descripcion by remember { mutableStateOf("") }
     var asignatura by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
-        Text(
-            text = "UNIFI - Mis Tareas",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color(0xFF3A7BD5)
-        )
+        // 🔵 ENCABEZADO
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.primary
+        ) {
+            Text(
+                text = "T A R E A S",
+                style = MaterialTheme.typography.titleLarge,
+                fontSize = 26.sp,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                color = MaterialTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center
+
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -108,4 +134,4 @@ fun TareasScreen(vm: PendienteViewModel = viewModel()) {
             }
         }
     }
-}
+}}

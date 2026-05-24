@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "531777348532",
+    "project_id": "unifi-f0629",
+    "storage_bucket": "unifi-f0629.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531777348532:android:8b104274f2d82ddb2a48e1",
+        "android_client_info": {
+          "package_name": "com.example.unifi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNP14ZixaT3UBkscaNB493ZUujUiAoUUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
