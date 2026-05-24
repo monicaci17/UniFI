@@ -18,7 +18,9 @@ import android.widget.TimePicker
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.example.unifi.data.model.Clase
 import java.util.Calendar
+
 
 @Composable
 fun HorarioScreen(vm: HorarioViewModel = viewModel()) {
@@ -190,7 +192,9 @@ fun HorarioScreen(vm: HorarioViewModel = viewModel()) {
                                             .fillMaxWidth()
                                             .padding(vertical = 4.dp),
                                         colors = CardDefaults.cardColors(
-                                            containerColor = clase.color
+                                            containerColor = Color(
+                                                android.graphics.Color.parseColor(clase.colorHex)
+                                            )
                                         )
                                     ) {
                                         Column(

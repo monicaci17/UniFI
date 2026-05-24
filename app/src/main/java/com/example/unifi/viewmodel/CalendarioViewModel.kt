@@ -10,6 +10,8 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 class CalendarioViewModel : ViewModel() {
@@ -67,21 +69,30 @@ class CalendarioViewModel : ViewModel() {
 
     // ➕ Agregar evento
     fun agregarEvento(titulo: String) {
+
         if (fechaSeleccionada.isBlank()) return
 
-        val evento = Evento(
-            id = eventos.size + 1,
-            fecha = fechaSeleccionada,
-            titulo = titulo
-        )
+        viewModelScope.launch {
 
-        repository.addEvento(evento)
-        cargarEventos()
+            val evento = Evento(
+                fecha = fechaSeleccionada,
+                titulo = titulo
+            )
+
+            repository.addEvento(evento)
+
+            cargarEventos()
+        }
     }
 
-    // 🔄 Cargar eventos del día seleccionado
     private fun cargarEventos() {
-        eventos.clear()
-        eventos.addAll(repository.getEventosPorFecha(fechaSeleccionada))
+
+        viewModelScope.launch {
+
+            val lista = repository.getEventosPorFecha(fechaSeleccionada)
+
+            eventos.clear()
+            eventos.addAll(lista)
+        }
     }
 }

@@ -1,18 +1,43 @@
 package com.example.unifi.data.repository
 
 import com.example.unifi.data.model.Clase
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 class HorarioRepository {
 
-    private val clases = mutableListOf<Clase>()
+    private val db = FirebaseFirestore.getInstance()
 
-    fun getClases(): List<Clase> = clases
+    private val clasesRef = db.collection("horario")
 
-    fun agregarClase(clase: Clase) {
-        clases.add(clase)
+    // Obtener clases
+    suspend fun getClases(): List<Clase> {
+
+        return clasesRef
+            .get()
+            .await()
+            .documents
+            .mapNotNull { doc ->
+                doc.toObject(Clase::class.java)
+            }
     }
 
-    fun eliminarClase(clase: Clase) {
-        clases.remove(clase)
+    // Agregar clase
+    suspend fun agregarClase(clase: Clase) {
+
+        val docRef = clasesRef.document()
+
+        val nuevaClase = clase.copy(id = docRef.id)
+
+        docRef.set(nuevaClase).await()
+    }
+
+    // Eliminar clase
+    suspend fun eliminarClase(clase: Clase) {
+
+        clasesRef
+            .document(clase.id)
+            .delete()
+            .await()
     }
 }
