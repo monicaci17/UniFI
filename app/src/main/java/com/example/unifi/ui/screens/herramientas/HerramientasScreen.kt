@@ -3,7 +3,6 @@ package com.example.unifi.ui.screens.herramientas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,30 +12,38 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.unifi.data.model.IdeaSinoptica
+import com.example.unifi.data.model.SubideaSinoptica
+import com.example.unifi.viewmodel.CuadroSinopticoViewModel
 import com.example.unifi.viewmodel.TarjetasMemoriaViewModel
 import kotlinx.coroutines.delay
 
-data class Herramienta(
-    val titulo: String,
-    val descripcion: String
-)
-
 @Composable
 fun HerramientasScreen(
-    tarjetasViewModel: TarjetasMemoriaViewModel = viewModel()
+    tarjetasViewModel: TarjetasMemoriaViewModel = viewModel(),
+    cuadroViewModel: CuadroSinopticoViewModel = viewModel()
 ) {
     var tiempoRestante by remember { mutableIntStateOf(25 * 60) }
     var corriendo by remember { mutableStateOf(false) }
 
     var mostrarTarjetas by remember { mutableStateOf(false) }
+    var mostrarCuadros by remember { mutableStateOf(false) }
+
     var nombreTema by remember { mutableStateOf("") }
     var temaSeleccionado by remember { mutableStateOf(-1) }
-
     var pregunta by remember { mutableStateOf("") }
     var respuesta by remember { mutableStateOf("") }
-
     var mostrarRespuesta by remember { mutableStateOf(false) }
     var indiceTarjeta by remember { mutableStateOf(0) }
+
+    var tituloCuadro by remember { mutableStateOf("") }
+    var conceptoGeneral by remember { mutableStateOf("") }
+    var ideaPrincipal by remember { mutableStateOf("") }
+    var tituloSubidea by remember { mutableStateOf("") }
+    var detallesTexto by remember { mutableStateOf("") }
+
+    val subideasTemp = remember { mutableStateListOf<SubideaSinoptica>() }
+    val ideasTemp = remember { mutableStateListOf<IdeaSinoptica>() }
 
     LaunchedEffect(corriendo) {
         while (corriendo && tiempoRestante > 0) {
@@ -51,13 +58,6 @@ fun HerramientasScreen(
 
     val minutos = tiempoRestante / 60
     val segundos = tiempoRestante % 60
-
-    val herramientas = listOf(
-        Herramienta("Repaso activo", "Intenta responder preguntas sin ver tus apuntes."),
-        Herramienta("Método Feynman", "Explica el tema como si se lo enseñaras a alguien más."),
-        Herramienta("Mapas mentales", "Organiza ideas y relaciones de forma visual."),
-        Herramienta("Tarjetas de memoria", "Crea temas, guarda preguntas y repasa respuestas.")
-    )
 
     Column(
         modifier = Modifier
@@ -83,12 +83,9 @@ fun HerramientasScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
             item {
-                Spacer(modifier = Modifier.height(16.dp))
-
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(6.dp)
@@ -97,10 +94,7 @@ fun HerramientasScreen(
                         modifier = Modifier.padding(18.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = "Pomodoro",
-                            style = MaterialTheme.typography.titleLarge
-                        )
+                        Text("Pomodoro", style = MaterialTheme.typography.titleLarge)
 
                         Spacer(modifier = Modifier.height(12.dp))
 
@@ -112,7 +106,7 @@ fun HerramientasScreen(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            text = "Trabaja durante 25 minutos enfocado y descansa 5 minutos. Este método ayuda a mejorar la concentración y evitar el agotamiento.",
+                            text = "Trabaja durante 25 minutos enfocado y descansa 5 minutos.",
                             textAlign = TextAlign.Center
                         )
 
@@ -124,7 +118,6 @@ fun HerramientasScreen(
                         ) {
                             Button(
                                 onClick = { corriendo = true },
-                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text("Iniciar", maxLines = 1)
@@ -132,7 +125,6 @@ fun HerramientasScreen(
 
                             Button(
                                 onClick = { corriendo = false },
-                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text("Pausar", maxLines = 1)
@@ -143,8 +135,7 @@ fun HerramientasScreen(
                                     corriendo = false
                                     tiempoRestante = 25 * 60
                                 },
-                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-                                modifier = Modifier.weight(1.3f)
+                                modifier = Modifier.weight(1.2f)
                             ) {
                                 Text("Reiniciar", maxLines = 1)
                             }
@@ -153,35 +144,45 @@ fun HerramientasScreen(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-            }
 
-            items(herramientas) { herramienta ->
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(6.dp),
-                    onClick = {
-                        if (herramienta.titulo == "Tarjetas de memoria") {
-                            mostrarTarjetas = !mostrarTarjetas
-                        }
-                    }
+                    onClick = { mostrarTarjetas = !mostrarTarjetas }
                 ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
+                    Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = herramienta.titulo,
+                            text = "Tarjetas de memoria",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
                         )
 
                         Spacer(modifier = Modifier.height(6.dp))
 
-                        Text(text = herramienta.descripcion)
+                        Text("Crea temas, guarda preguntas y repasa respuestas.")
                     }
                 }
-            }
 
-            item {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(6.dp),
+                    onClick = { mostrarCuadros = !mostrarCuadros }
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Cuadros sinópticos",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        Text("Organiza un tema en concepto general, ideas, subideas y detalles.")
+                    }
+                }
+
                 if (mostrarTarjetas) {
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -312,7 +313,8 @@ fun HerramientasScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        val tarjetas = tarjetasViewModel.temas[temaSeleccionado].tarjetas
+                        val tarjetas =
+                            tarjetasViewModel.temas[temaSeleccionado].tarjetas
 
                         if (tarjetas.isNotEmpty()) {
                             if (indiceTarjeta >= tarjetas.size) {
@@ -336,10 +338,7 @@ fun HerramientasScreen(
 
                                     Spacer(modifier = Modifier.height(12.dp))
 
-                                    Text(
-                                        text = "Pregunta:",
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
+                                    Text("Pregunta:", style = MaterialTheme.typography.titleMedium)
 
                                     Text(
                                         text = tarjeta.pregunta,
@@ -350,7 +349,7 @@ fun HerramientasScreen(
                                         Spacer(modifier = Modifier.height(12.dp))
 
                                         Text(
-                                            text = "Respuesta:",
+                                            "Respuesta:",
                                             style = MaterialTheme.typography.titleMedium
                                         )
 
@@ -362,10 +361,7 @@ fun HerramientasScreen(
 
                                     Spacer(modifier = Modifier.height(12.dp))
 
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                         Button(
                                             onClick = {
                                                 mostrarRespuesta = !mostrarRespuesta
@@ -376,7 +372,8 @@ fun HerramientasScreen(
 
                                         Button(
                                             onClick = {
-                                                indiceTarjeta = (indiceTarjeta + 1) % tarjetas.size
+                                                indiceTarjeta =
+                                                    (indiceTarjeta + 1) % tarjetas.size
                                                 mostrarRespuesta = false
                                             }
                                         ) {
@@ -385,7 +382,6 @@ fun HerramientasScreen(
 
                                         Button(
                                             onClick = {
-
                                                 tarjetasViewModel.eliminarTarjeta(
                                                     temaSeleccionado,
                                                     indiceTarjeta
@@ -405,6 +401,315 @@ fun HerramientasScreen(
                             }
                         } else {
                             Text("Aún no hay tarjetas en este tema.")
+                        }
+                    }
+                }
+
+                if (mostrarCuadros) {
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = "Cuadros sinópticos",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedTextField(
+                        value = tituloCuadro,
+                        onValueChange = { tituloCuadro = it },
+                        label = { Text("Título del cuadro") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = conceptoGeneral,
+                        onValueChange = { conceptoGeneral = it },
+                        label = { Text("Concepto general") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Text(
+                                text = "Construir idea principal",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            OutlinedTextField(
+                                value = ideaPrincipal,
+                                onValueChange = { ideaPrincipal = it },
+                                label = { Text("Idea principal") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Text(
+                                text = "Subideas de esta idea",
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            OutlinedTextField(
+                                value = tituloSubidea,
+                                onValueChange = { tituloSubidea = it },
+                                label = { Text("Subidea") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            OutlinedTextField(
+                                value = detallesTexto,
+                                onValueChange = { detallesTexto = it },
+                                label = { Text("Detalles separados por coma") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Button(
+                                onClick = {
+                                    val detalles =
+                                        detallesTexto.split(",")
+                                            .map { it.trim() }
+                                            .filter { it.isNotBlank() }
+
+                                    if (tituloSubidea.isNotBlank()) {
+                                        subideasTemp.add(
+                                            SubideaSinoptica(
+                                                titulo = tituloSubidea,
+                                                detalles = detalles
+                                            )
+                                        )
+
+                                        tituloSubidea = ""
+                                        detallesTexto = ""
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text("Agregar subidea")
+                            }
+
+                            if (subideasTemp.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                subideasTemp.forEachIndexed { index, subidea ->
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                        )
+                                    ) {
+                                        Column(modifier = Modifier.padding(10.dp)) {
+                                            Text(
+                                                text = "${index + 1}. ${subidea.titulo}",
+                                                fontWeight = FontWeight.Bold
+                                            )
+
+                                            subidea.detalles.forEach { detalle ->
+                                                Text(
+                                                    text = "   • $detalle",
+                                                    fontSize = 14.sp
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Button(
+                                onClick = {
+                                    if (
+                                        ideaPrincipal.isNotBlank() &&
+                                        subideasTemp.isNotEmpty()
+                                    ) {
+                                        ideasTemp.add(
+                                            IdeaSinoptica(
+                                                titulo = ideaPrincipal,
+                                                subideas = subideasTemp.toList()
+                                            )
+                                        )
+
+                                        ideaPrincipal = ""
+                                        tituloSubidea = ""
+                                        detallesTexto = ""
+                                        subideasTemp.clear()
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text("Agregar idea principal al cuadro")
+                            }
+                        }
+                    }
+
+                    if (ideasTemp.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = "Vista previa del cuadro",
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        ideasTemp.forEachIndexed { indexIdea, idea ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                )
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp)) {
+                                    Text(
+                                        text = "${indexIdea + 1}. ${idea.titulo}",
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    idea.subideas.forEachIndexed { indexSubidea, subidea ->
+                                        Text(
+                                            text = "   ${indexIdea + 1}.${indexSubidea + 1} ${subidea.titulo}",
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+
+                                        subidea.detalles.forEachIndexed { indexDetalle, detalle ->
+                                            Text(
+                                                text = "      ${indexIdea + 1}.${indexSubidea + 1}.${indexDetalle + 1} $detalle",
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = {
+                            cuadroViewModel.agregarCuadro(
+                                titulo = tituloCuadro,
+                                conceptoGeneral = conceptoGeneral,
+                                ideas = ideasTemp.toList()
+                            )
+
+                            tituloCuadro = ""
+                            conceptoGeneral = ""
+                            ideaPrincipal = ""
+                            tituloSubidea = ""
+                            detallesTexto = ""
+                            subideasTemp.clear()
+                            ideasTemp.clear()
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Guardar cuadro sinóptico")
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = "Mis cuadros",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    cuadroViewModel.cuadros.forEachIndexed { index, cuadro ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            elevation = CardDefaults.cardElevation(6.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = cuadro.titulo,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp
+                                )
+
+                                Spacer(modifier = Modifier.height(6.dp))
+
+                                Text(
+                                    text = "Concepto general:",
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                Text(text = cuadro.conceptoGeneral)
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                cuadro.ideas.forEachIndexed { indexIdea, idea ->
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 6.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                        )
+                                    ) {
+                                        Column(modifier = Modifier.padding(12.dp)) {
+                                            Text(
+                                                text = "${indexIdea + 1}. ${idea.titulo}",
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 16.sp
+                                            )
+
+                                            Spacer(modifier = Modifier.height(6.dp))
+
+                                            idea.subideas.forEachIndexed { indexSubidea, subidea ->
+                                                Text(
+                                                    text = "   ${indexIdea + 1}.${indexSubidea + 1} ${subidea.titulo}",
+                                                    fontWeight = FontWeight.SemiBold
+                                                )
+
+                                                subidea.detalles.forEachIndexed { indexDetalle, detalle ->
+                                                    Text(
+                                                        text = "      ${indexIdea + 1}.${indexSubidea + 1}.${indexDetalle + 1} $detalle",
+                                                        fontSize = 14.sp
+                                                    )
+                                                }
+
+                                                Spacer(modifier = Modifier.height(4.dp))
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Button(
+                                    onClick = {
+                                        cuadroViewModel.eliminarCuadro(index)
+                                    }
+                                ) {
+                                    Text("Eliminar")
+                                }
+                            }
                         }
                     }
                 }
