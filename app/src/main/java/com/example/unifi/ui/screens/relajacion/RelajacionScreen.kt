@@ -1,6 +1,5 @@
 package com.example.unifi.ui.screens.relajacion
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,15 +23,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.unifi.R
+import coil.compose.AsyncImage
 import com.example.unifi.data.model.Frases
 import com.example.unifi.viewmodel.RelajacionViewModel
+import androidx.compose.runtime.remember
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.example.unifi.R
 
 @Composable
 fun RelajacionScreen(
@@ -44,7 +46,6 @@ fun RelajacionScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
 
-        // 🔵 ENCABEZADO
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.primary
@@ -67,14 +68,12 @@ fun RelajacionScreen(
                 .fillMaxSize()
         ) {
 
-            // 🔥 IMAGEN CON MENSAJE (ANTES DEL BOTÓN)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(160.dp)
             ) {
 
-                // Imagen de fondo
                 Image(
                     painter = painterResource(id = R.drawable.moti),
                     contentDescription = null,
@@ -84,7 +83,6 @@ fun RelajacionScreen(
                         .clip(RoundedCornerShape(16.dp))
                 )
 
-                // Capa oscura
                 Box(
                     modifier = Modifier
                         .matchParentSize()
@@ -92,7 +90,6 @@ fun RelajacionScreen(
                         .background(Color.Black.copy(alpha = 0.35f))
                 )
 
-                // Texto encima
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -119,7 +116,6 @@ fun RelajacionScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 🔘 BOTÓN
             Button(
                 onClick = {
                     relajacionViewModel.cargarFrases()
@@ -131,7 +127,6 @@ fun RelajacionScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 📜 LISTA
             LazyColumn {
                 items(relajacionViewModel.frases) { frase ->
                     FraseCard(frase)
@@ -143,31 +138,58 @@ fun RelajacionScreen(
 
 @Composable
 fun FraseCard(frase: Frases) {
+
+    val imagenFrase = remember(frase.q) {
+        "https://picsum.photos/800/400?random=${frase.q.hashCode()}"
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .height(170.dp)
             .padding(vertical = 6.dp),
-        elevation = CardDefaults.cardElevation(6.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+        elevation = CardDefaults.cardElevation(6.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(14.dp)
+
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            Text(
-                text = "\"${frase.q}\"",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+
+            AsyncImage(
+                model = imagenFrase,
+                contentDescription = "Imagen motivacional",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "- ${frase.a}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(Color.Black.copy(alpha = 0.45f))
             )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(14.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                Text(
+                    text = "\"${frase.q}\"",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "- ${frase.a}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White
+                )
+            }
         }
     }
 }
