@@ -1,110 +1,162 @@
 package com.example.unifi.ui.screens.perfil
 
-import android.R.attr.fontWeight
-import androidx.compose.foundation.background
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.unifi.viewmodel.UserViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.example.unifi.R
+import com.example.unifi.navigation.Routes
+import com.example.unifi.ui.components.AppImage
+import com.example.unifi.viewmodel.AuthViewModel
 
 @Composable
-fun ProfileScreen(viewModel: UserViewModel) {
+fun PerfilScreen(
+    navController: NavHostController,
+    authViewModel: AuthViewModel = viewModel()
+) {
+    val uiState by authViewModel.uiState.collectAsState()
+    val profile = uiState.profile
 
-    val user = viewModel.getUser()
+    var nombre by remember { mutableStateOf("") }
+    var carrera by remember { mutableStateOf("") }
+    var semestre by remember { mutableStateOf("") }
+    var meta by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        authViewModel.loadCurrentProfile()
+    }
+
+    LaunchedEffect(profile) {
+        if (profile != null) {
+            nombre = profile.nombre
+            carrera = profile.carrera
+            semestre = profile.semestre
+            meta = profile.meta
+        }
+    }
+
+    LaunchedEffect(uiState.isLoggedIn) {
+        if (!uiState.isLoggedIn) {
+            navController.navigate(Routes.Login.route) {
+                popUpTo(Routes.HomeMenu.route) { inclusive = true }
+            }
+        }
+    }
+
+    if (!uiState.isLoggedIn) return
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        AppImage(
+            imageRes = R.drawable.img_unifi_logo,
+            description = "Imagen de perfil",
+            size = 90.dp
+        )
 
-        // 🔹 Encabezado fijo
-        Surface(
+        Text(
+            text = "Mi perfil",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Text(
+            text = profile?.correo ?: "Correo vinculado a Firebase",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        OutlinedTextField(
+            value = nombre,
+            onValueChange = { nombre = it },
+            label = { Text("Nombre") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = carrera,
+            onValueChange = { carrera = it },
+            label = { Text("Carrera") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = semestre,
+            onValueChange = { semestre = it },
+            label = { Text("Semestre") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = meta,
+            onValueChange = { meta = it },
+            label = { Text("Meta académica") },
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.primary,
-            tonalElevation = 4.dp
-        ) {
+            minLines = 2
+        )
+
+        uiState.message?.let {
             Text(
-                text = "U N I F I",
-                modifier = Modifier.padding(16.dp),
-                fontSize = 30.sp,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
-                textAlign = TextAlign.Center
+                text = it,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(top = 8.dp)
             )
         }
 
-        // 🔹 Contenido
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
+        uiState.error?.let {
             Text(
-                text = "Perfil",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSecondary,
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 8.dp)
             )
+        }
 
-            Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(6.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
+        Button(
+            onClick = { authViewModel.saveProfile(nombre, carrera, semestre, meta) },
+            enabled = !uiState.isLoading,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Guardar perfil")
+        }
 
-                    if (user != null) {
-
-                        Text(
-                            text = "Nombre",
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = user.nombre,
-
-                        )
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Text("Correo",
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(user.correo, style = MaterialTheme.typography.bodyLarge)
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Text("Usuario", style = MaterialTheme.typography.labelMedium,
-                                fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold)
-                        Text(user.usuario, style = MaterialTheme.typography.bodyLarge)
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-
-                    } else {
-                        Text(
-                            "No hay usuario registrado",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+        TextButton(
+            onClick = {
+                authViewModel.logout()
+                navController.navigate(Routes.Login.route) {
+                    popUpTo(0)
                 }
             }
+        ) {
+            Text("Cerrar sesión")
         }
     }
 }
